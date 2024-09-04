@@ -1,0 +1,598 @@
+SQL*Plus: Release 11.2.0.1.0 Production on 화 8월 27 09:14:51 2024
+
+Copyright (c) 1982, 2010, Oracle.  All rights reserved.
+
+사용자명 입력: system
+비밀번호 입력:
+
+다음에 접속됨:
+Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> create member (
+  2  id varchar2(8),
+  3  name varchar2(30),
+  4  tel varchar2(13),
+  5  primary key(id)
+  6  );
+create member (
+       *
+1행에 오류:
+ORA-00901: CREATE 명령어가 부적합합니다
+
+
+SQL> create member (
+  2    2  id varchar2(8),
+  3    3  name varchar2(30),
+  4    4  tel varchar2(13),
+  5    5  primary key(id)
+  6  );
+create member (
+       *
+1행에 오류:
+ORA-00901: CREATE 명령어가 부적합합니다
+
+
+SQL> create table member (
+  2  id varchar2(8) primary key,
+  3  name varchar2(10),
+  4  tel varchar2(13)
+  5  );
+
+테이블이 생성되었습니다.
+
+SQL> create table car (
+  2  carnum varchar2(4),
+  3  id varchar2(8),
+  4  constraint fk_id foreign key(id) references member (id)
+  5  );
+
+테이블이 생성되었습니다.
+
+SQL> create table customerManage (
+  2  id varchar2(8) primary key,
+  3  name varchar(10),
+  4  gender varchar(2) check(gender in ('남','여')),
+  5  point number(6,2) check(point between 1 and 9999.99)
+  6  );
+
+테이블이 생성되었습니다.
+
+SQL> create table client (
+  2  id varchar2(8),
+  3  stamp timestamp,
+  4  constraint fk_id foreign key(id) references customerManage(id)
+  5  );
+constraint fk_id foreign key(id) references customerManage(id)
+           *
+4행에 오류:
+ORA-02264: 기존의 제약에 사용된 이름입니다
+
+
+SQL> create table client (
+  2  id varchar2(8),
+  3  stamp timestamp,
+  4  constraint fk_clientId foreign key(id) references customerManage(id)
+  5  );
+
+테이블이 생성되었습니다.
+
+SQL> desc customerManage
+ 이름                                      널?      유형
+ ----------------------------------------- -------- ----------------------------
+ ID                                        NOT NULL VARCHAR2(8)
+ NAME                                               VARCHAR2(10)
+ GENDER                                             VARCHAR2(2)
+ POINT                                              NUMBER(6,2)
+
+SQL> desc client
+ 이름                                      널?      유형
+ ----------------------------------------- -------- ----------------------------
+ ID                                                 VARCHAR2(8)
+ STAMP                                              TIMESTAMP(6)
+
+SQL> insert into customerManage
+  2  values('Chan','이찬','남',9999.99);
+
+1 개의 행이 만들어졌습니다.
+
+SQL> desc customerManage
+ 이름                                      널?      유형
+ ----------------------------------------- -------- ----------------------------
+ ID                                        NOT NULL VARCHAR2(8)
+ NAME                                               VARCHAR2(10)
+ GENDER                                             VARCHAR2(2)
+ POINT                                              NUMBER(6,2)
+
+SQL> select * from customerManage
+  2  ;
+
+ID       NAME       GE      POINT
+-------- ---------- -- ----------
+Chan     이찬       남    9999.99
+
+SQL> insert into client
+  2  values('Chan',timestamp);
+values('Chan',timestamp)
+              *
+2행에 오류:
+ORA-00984: 열을 사용할 수 없습니다
+
+
+SQL> insert into client
+  2  values('Chan', sysdate);
+
+1 개의 행이 만들어졌습니다.
+
+SQL> select * from customerManage
+  2  ;
+
+ID       NAME       GE      POINT
+-------- ---------- -- ----------
+Chan     이찬       남    9999.99
+
+SQL> select * from client;
+
+ID
+--------
+STAMP
+---------------------------------------------------------------------------
+Chan
+24/08/27 14:19:12.000000
+
+
+SQL> create table customerEvent (
+  2  id varchar2(8),
+  3  eventName varchar2(20) check(eventName in('초복이벤트','중복이벤트','말복이벤트')),
+  4  eNumber number(3) check (eNumber between 100 and 999),
+  5  pDate timestamp
+  6  );
+
+테이블이 생성되었습니다.
+
+SQL> drop table customerEvent;
+
+테이블이 삭제되었습니다.
+
+SQL> create table customerEvent (
+  2    2  id varchar2(8),
+  3    3  eventName varchar2(20) check(eventName in('초복이벤트','중복이벤트','말복이벤트')),
+  4    4  eNumber number(3) check (eNumber between 100 and 999),
+  5    5  pDate timestamp,
+  6  constraint fkEventId foreign key(id) references customerManage(id));
+  2  id varchar2(8),
+  *
+2행에 오류:
+ORA-00904: : 부적합한 식별자
+
+
+SQL> create table customerEvent(
+  2  id varchar2(8),
+  3  eventName varchar2(20) check(eventName in ('초복이벤트','중복이벤트','말복이벤트')),
+  4  eNumber number(3) check (eNumber between 100 and 999),
+  5  pDate timestamp,
+  6  constraint fkEventId foreign key(id) references customerManage(id));
+
+테이블이 생성되었습니다.
+
+SQL> insert into customerEvent
+  2  values('Chan','말복이벤트',373,sysdate);
+
+1 개의 행이 만들어졌습니다.
+
+SQL> select * from customerEvent;
+
+ID       EVENTNAME               ENUMBER
+-------- -------------------- ----------
+PDATE
+---------------------------------------------------------------------------
+Chan     말복이벤트                  373
+24/08/27 14:34:55.000000
+
+
+SQL> create table stu(
+  2  id varchar2(3),
+  3  name varchar2(6),
+  4  addr varchar2(6),
+  5  primary key(id)
+  6  );
+
+테이블이 생성되었습니다.
+
+SQL> create table sub(
+  2  scode varchar2(3) primary key,
+  3  sname varchar2(6),
+  4  str varchar2(6)
+  5  );
+
+테이블이 생성되었습니다.
+
+SQL> create table sugang(
+  2  userid varchar2(3),
+  3  subcode varchar2(3),
+  4  constraint sugang_fk_userid foreign key(userid) references stu(id)
+  5  on delete set null,
+  6  constraint sugang_fk_subcode foreign key(subcode) references sub(scode)
+  7  on delete cascade
+  8  );
+
+테이블이 생성되었습니다.
+
+SQL> insert into stu
+  2  values('aaa','홍길동','수원');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> insert into stu
+  2  values('bbb','일지매','서울');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> insert into stu
+  2  values('ccc','아저씨','대전');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> delete stu where id ='ccc';
+
+1 행이 삭제되었습니다.
+
+SQL> select * from stu;
+
+ID  NAME   ADDR
+--- ------ ------
+aaa 홍길동 수원
+bbb 일지매 서울
+
+SQL> insert into stu
+  2  values('aaa','아저씨','대전');
+insert into stu
+*
+1행에 오류:
+ORA-00001: 무결성 제약 조건(SYSTEM.SYS_C0011084)에 위배됩니다
+
+
+SQL> insert into stu
+  2  values('ddd','아저씨','대전');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> insert into stu
+  2  values('ccc','오징어','서울특별시');
+values('ccc','오징어','서울특별시')
+                      *
+2행에 오류:
+ORA-12899: "SYSTEM"."STU"."ADDR" 열에 대한 값이 너무 큼(실제: 10, 최대값: 6)
+
+
+SQL> insert into stu
+  2  values('ccc','오징어','서울');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> insert into sub
+  2  values('오라클','김길수');
+insert into sub
+            *
+1행에 오류:
+ORA-00947: 값의 수가 충분하지 않습니다
+
+
+SQL> insert into sub
+  2  values('c01','오라클','김길수');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> insert into sub
+  2  values('c02','자바','김아무개');
+values('c02','자바','김아무개')
+                    *
+2행에 오류:
+ORA-12899: "SYSTEM"."SUB"."STR" 열에 대한 값이 너무 큼(실제: 8, 최대값: 6)
+
+
+SQL> insert into sub
+  2  values('c02','자바','아무개');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> insert into sub
+  2  values('c02','객체언어','홍길동');
+values('c02','객체언어','홍길동')
+             *
+2행에 오류:
+ORA-12899: "SYSTEM"."SUB"."SNAME" 열에 대한 값이 너무 큼(실제: 8, 최대값: 6)
+
+
+SQL> alter table sub modify sname varchar2(8);
+
+테이블이 변경되었습니다.
+
+SQL> insert into sub
+  2  values('c02','객체언어','홍길동');ㅣ
+  3  ;
+values('c02','객체언어','홍길동');ㅣ
+                                 *
+2행에 오류:
+ORA-00911: 문자가 부적합합니다
+
+
+SQL> insert into sub
+  2  values('c02','객체언어','홍길동');
+insert into sub
+*
+1행에 오류:
+ORA-00001: 무결성 제약 조건(SYSTEM.SYS_C0011085)에 위배됩니다
+
+
+SQL> insert into sub
+  2  values('c03','객체언어','홍길동');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> drop table sub where scode='c03';
+drop table sub where scode='c03'
+               *
+1행에 오류:
+ORA-00933: SQL 명령어가 올바르게 종료되지 않았습니다
+
+
+SQL> update sub set scode ='c05' where scode='c03';
+
+1 행이 갱신되었습니다.
+
+SQL> select * from sub;
+
+SCO SNAME    STR
+--- -------- ------
+c01 오라클   김길수
+c02 자바     아무개
+c05 객체언어 홍길동
+
+SQL> insert into sub
+  2  values('c03','html','이길동');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> insert into sub
+  2  values('c04','js','김자바');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> select * from sub;
+
+SCO SNAME    STR
+--- -------- ------
+c01 오라클   김길수
+c02 자바     아무개
+c05 객체언어 홍길동
+c03 html     이길동
+c04 js       김자바
+
+SQL> desc sugang
+ 이름                                      널?      유형
+ ----------------------------------------- -------- ----------------------------
+ USERID                                             VARCHAR2(3)
+ SUBCODE                                            VARCHAR2(3)
+
+SQL> insert into sugang
+  2  values('aaa','c05');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> insert into sugang
+  2  values('aaa','c01');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> insert into sugang
+  2  values('aaa','c03');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> insert into sugang
+  2  values('bbb',c01');
+ERROR:
+ORA-01756: 단일 인용부를 지정해 주십시오
+
+
+SQL> insert into sugang
+  2  values('bbb','c01');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> update stu set name='이길동' where name='홍길동';
+
+1 행이 갱신되었습니다.
+
+SQL> select * from stu;
+
+ID  NAME   ADDR
+--- ------ ------
+aaa 이길동 수원
+bbb 일지매 서울
+ddd 아저씨 대전
+ccc 오징어 서울
+
+SQL> select * from sugang;
+
+USE SUB
+--- ---
+aaa c05
+aaa c01
+aaa c03
+bbb c01
+
+SQL> update sub set str='김오라' where name='김길수';
+update sub set str='김오라' where name='김길수'
+                                  *
+1행에 오류:
+ORA-00904: "NAME": 부적합한 식별자
+
+
+SQL> update sub set str='김오라' where str='김길수';
+
+1 행이 갱신되었습니다.
+
+SQL> select * from sub;
+
+SCO SNAME    STR
+--- -------- ------
+c01 오라클   김오라
+c02 자바     아무개
+c05 객체언어 홍길동
+c03 html     이길동
+c04 js       김자바
+
+SQL> update sugang set subcode='c04' where subcode='c01';
+
+2 행이 갱신되었습니다.
+
+SQL> select * from sugang
+  2  ;
+
+USE SUB
+--- ---
+aaa c05
+aaa c04
+aaa c03
+bbb c04
+
+SQL> update sugang set subcode='c01' where subcode='c04' userid='aaa';
+update sugang set subcode='c01' where subcode='c04' userid='aaa'
+                                                    *
+1행에 오류:
+ORA-00933: SQL 명령어가 올바르게 종료되지 않았습니다
+
+
+SQL> update sugang set subcode='c01' where subcode='c04';
+
+2 행이 갱신되었습니다.
+
+SQL> select * from sugang
+  2  ;
+
+USE SUB
+--- ---
+aaa c05
+aaa c01
+aaa c03
+bbb c01
+
+SQL> update sugang set subcode='c04' where subcode='c01' and userid='aaa';
+
+1 행이 갱신되었습니다.
+
+SQL> select * from sugang
+  2  ;
+
+USE SUB
+--- ---
+aaa c05
+aaa c04
+aaa c03
+bbb c01
+
+SQL> delete sugang set subcode='c03' where userid='aaa';
+delete sugang set subcode='c03' where userid='aaa'
+              *
+1행에 오류:
+ORA-00933: SQL 명령어가 올바르게 종료되지 않았습니다
+
+
+SQL> delete from sugang where userid='aaa' and subcode='c03';
+
+1 행이 삭제되었습니다.
+
+SQL> select * from sugang
+  2  ;
+
+USE SUB
+--- ---
+aaa c05
+aaa c04
+bbb c01
+
+SQL> update sugang set subcode='c01' where userid='aaa' and subcode='c04';
+
+1 행이 갱신되었습니다.
+
+SQL> select * from sugang
+  2  ;
+
+USE SUB
+--- ---
+aaa c05
+aaa c01
+bbb c01
+
+SQL> update sugang set subcode='c01' where userid='bbb' and subcode='c01';
+
+1 행이 갱신되었습니다.
+
+SQL> select * from sugang;
+
+USE SUB
+--- ---
+aaa c05
+aaa c01
+bbb c01
+
+SQL> delete from stu where name='홍길동';
+
+0 행이 삭제되었습니다.
+
+SQL> select * from stu;
+
+ID  NAME   ADDR
+--- ------ ------
+aaa 이길동 수원
+bbb 일지매 서울
+ddd 아저씨 대전
+ccc 오징어 서울
+
+SQL> select * from sugang;
+
+USE SUB
+--- ---
+aaa c05
+aaa c01
+bbb c01
+
+SQL> update sugang set subcode='c04' where userid='bbb' and subcode='c01';
+
+1 행이 갱신되었습니다.
+
+SQL> select * from sugang;
+
+USE SUB
+--- ---
+aaa c05
+aaa c01
+bbb c04
+
+SQL> delete from sub where str='김자바';
+
+1 행이 삭제되었습니다.
+
+SQL> select * from sugang;
+
+USE SUB
+--- ---
+aaa c05
+aaa c01
+
+SQL> insert into sugang
+  2  values('bbb','c01');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> select * from sugang;
+
+USE SUB
+--- ---
+aaa c05
+aaa c01
+bbb c01
+
+SQL>

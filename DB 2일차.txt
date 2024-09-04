@@ -1,0 +1,89 @@
+CRUD create read update delete
+row insert
+row select
+row update
+row delete
+
+행(row) - CRUD
+열(column) - 속성, 제약조건 / 키: 컬럼에 부여하는 기능. 기본키, 외래키
+
+기본키: 튜플(row)을 유일하게 식별할 수 있다. 기본키로 index(색인)를 생성하여 저장한다. 인덱스는 검색속도가 향상. null 불가
+1. index형성 => 속도 향상
+2. 유일성 형성
+
+
+a. 기본키
+member
+  이름   주소  전화번호
+홍길동  서울     1111
+일지매  서울     1111
+홍길동  수원     2222
+↑이러면 udate 나 delete 과정에서 row가 유일하게 식별하지 못하게 됨.
+이상현상(현 상황은 특수하게 갱신이상현상[update], 삭제이상현상[delete] ← 이라고 불림)이 발생할 수 있다.
+ID라는 열을 넣어서 고유성을 확보 가능
+이럴 때 기본키가 필요
+
+create table m (
+ID varchar2(1) primary key(기본키),
+name varchar2(10),
+address varchar2(20)
+);
+
+
+b. 외래키
+  ID   이름    전번   차번호
+  a     홍     1111      1
+  a     홍     1111      2
+
+설계 시: 1. 이상현상
+	유일성
+	데이터의 중복 최소화
+
+
+
+ (PK)		         (외래키 - PK를 참조한다)
+  ID   이름   전번 /  차번호  ID
+  a     홍     1111/      1     a
+   member 테이블    car 테이블
+
+이렇게 테이블을 쪼개는 과정은 전문 용어로 '정규화' 라고 한다. e.g) 정규화를 진행합니다. ~~라고 말하면 됨
+
+car 테이블의(자식 relation의) 외래키는 member테이블(부모 relation)의 ID(PK)컬럼을 참조한다.
+
+-------------------------------------------------------------------------------------------------------------------
+
+외래키 활용 실습
+
+create table member (
+id varchar2(8) primary key,
+name varchar2(10),
+tel varchar2(13)
+);
+
+create table car (
+carnum varchar2(4),
+id varchar2(8),
+constraint fk_id foreign key(id) references member (id)
+);
+
+constraint [FK명] foreign ([FK가 될 컬럼명]) reference [FK로 연결할 PK가 위치한 부모테이블] ([PK컬럼명])
+
+or
+
+create table car (
+carnum varchar2(4),
+id varchar2(8),
+foreign key(id) references member(id)
+);
+
+
+
+
+
+
+
+
+
+
+
+

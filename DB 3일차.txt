@@ -1,0 +1,48 @@
+E        R        D
+개체  관계	=> 개념적 설계   	  =>	 논리적	     =>         물리적
+				        (테이블 명세서)	     (쿼리문)
+							    Oracle - varchar2, number...
+							    MySql - varchar 만 쓰고 number 안씀, etc
+
+개체란?(객체(object)랑 안됨): 독립적으로 존재할 수 있는 대상 /  시나리오에서 독립적으로 있을 수 있는 거
+
+   [고객]   -  {출석}   -   [출석대장]
+   |      |	     		|
+ [id] [name]	         [시간]
+
+고객과 출석대장이 개체
+
+   [교수]1-      {논문작성}   -<[논문]	  (1 : N 의 관계를 의미함)
+   |     |			 |     |
+[id-pk][이름]	        [작성일][id-fk]
+
+   [교수]1-      {논문작성}   -ㆁ<[논문]	  (버블이 있으면 고객은 무조건 출석할 필요는 없음. 강제성x)
+   |     |			 |     |
+[id-pk][이름]	        [작성일][id-fk]
+
+   [고객] >ㅇ-  			{이벤트참여}    	                          -ㅇ<[이벤트]
+   |     |       |         |              |            |            |                         |             |        |  
+[ID-PK][이름][성별][포인트]    [신청ID-PK][ID-FK][이벤트번호-FK]	[이벤트번호-PK][e이름][날짜]
+
+create table customer (
+id varchar2(8) primary key,
+name varchar2(10) not null,
+gender varchar2(2) check (gender in('남','여')),
+point number(6,2) check (point between 0 and 9999.99) 
+);
+
+create table event (
+eventNumber number(3) primary key,
+eventName check(eventName in ('이벤트1','이벤트2','이벤트3')),
+eDate timestamp,
+);
+
+create table participate (
+eventID varchar2(3) primary key,
+id varchar2(8),
+eventNumber number(3),
+constraint fk_id foreign key(id) references customer(id))
+on delete cascade(부모 컬럼이 삭제될 때 외래키/자식 튜플도 연쇄적으로 삭제됨),
+constraint fk_eNumber foreign key(eventNumber) references event(eventNumber)
+on delete set null(부모 컬럼이 삭제되면 자식 외래키/튜플의 값은 null 로 설정 됨)
+);
