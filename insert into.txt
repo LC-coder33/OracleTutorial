@@ -1,0 +1,10 @@
+insert into room value ('일반관1','1.0','50);
+insert into room value ('일반관2','1.0','50);
+insert into room value ('일반관3','1.0','50);
+insert into room value ('일반관4','1.0','50);
+insert into room value ('일반관5','1.0','50);
+insert into room value ('일반관6','1.0','50);
+insert into room value ('3D관7','1.2','50);
+insert into room value ('3D관8','1.2','50);
+insert into room value ('4D관9','1.5','50);
+insert into room value ('4D관10','1.5','50);
